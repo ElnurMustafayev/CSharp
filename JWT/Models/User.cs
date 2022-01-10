@@ -6,9 +6,9 @@ public class User
 {
     public readonly Guid Id;
     public string Name { get; set; }
-    public RoleBase Role { get; set; }
+    public UserRoleBase Role { get; set; }
 
-    public User(string name, RoleBase role)
+    public User(string name, UserRoleBase role)
     {
         this.Id = Guid.NewGuid();
         this.Name = name;

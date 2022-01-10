@@ -38,7 +38,7 @@ public class JWTTokenService {
             // data
             Subject = new ClaimsIdentity(new[] { 
                     new Claim(nameof(foundUser.Id), foundUser.Id.ToString()),
-                    new Claim(nameof(foundUser.Role), foundUser.Role.RoleName),
+                    new Claim(nameof(foundUser.Role), foundUser.Role.Name), 
                 }),
             // properties
             SigningCredentials = new SigningCredentials(

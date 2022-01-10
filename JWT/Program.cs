@@ -1,6 +1,10 @@
 ﻿using System.Linq;
+using Program.Controllers;
+using Program.Enums;
+using Program.Middleware;
 using Program.Models;
 using Program.Repositories;
+using Program.Roles;
 using Program.Services;
 
 namespace Program;
@@ -10,19 +14,29 @@ public class App {
         // Get User
         var userRepository = new UserLocalRepository();
         var users = userRepository.GetAllUsers();
-        var admin = users.FirstOrDefault(u => u.Role is AdminRole);
+        var admin = users.First(u => u.Role.Id == (int)USER_ROLES.Moderator);
 
-        // Create service
-        string sekcretKey = Guid.NewGuid().ToString();
-        var tokenService = new JWTTokenService(sekcretKey);
+        #region CheckJWT
 
-        // Encode
-        string token = tokenService.GenerateJWTToken(admin?.Id);
+            // Create service
+            string sekcretKey = Guid.NewGuid().ToString();
+            var tokenService = new JWTTokenService(sekcretKey);
 
-        // Decode
-        AccessToken accessToken = tokenService.ValidateJWTToken(token);
+            // Encode
+            string token = tokenService.GenerateJWTToken(admin?.Id);
 
-        // Show
-        System.Console.WriteLine(accessToken);
+            // Decode
+            AccessToken accessToken = tokenService.ValidateJWTToken(token);
+
+            // Show
+            System.Console.WriteLine(accessToken);
+
+        #endregion
+
+        #region CheckRole
+
+            UserRoleMiddleware.Invoke(admin, typeof(AdminController), () => new AdminController().SayHello());
+
+        #endregion
     }
 }

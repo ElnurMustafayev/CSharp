@@ -1,4 +1,5 @@
 using Program.Models;
+using Program.Roles;
 
 namespace Program.Repositories;
 

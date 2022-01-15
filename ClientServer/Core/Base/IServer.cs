@@ -4,6 +4,6 @@ namespace Core.Base;
 
 public interface IServer
 {
-    void Open(IPEndPoint endPoint);
-    void Listen();
+    void Open();
+    Task ListenAsync();
 }

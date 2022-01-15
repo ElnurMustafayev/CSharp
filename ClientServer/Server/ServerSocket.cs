@@ -1,33 +1,31 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Core.Base;
 
 namespace Server;
 
-public class ServerSocket
+public class ServerSocket : IServer
 {
-    public async Task OpenConnectionAsync() {
-        // create Socket
-        Socket socket = new Socket(
+    public Socket Socket { get; private set; }
+    public readonly IPEndPoint EndPoint;
+
+    public ServerSocket(IPEndPoint endPoint) {
+        // initialize Socket
+        this.Socket = new Socket(
             addressFamily: AddressFamily.InterNetwork,
             socketType: SocketType.Stream,
             protocolType: ProtocolType.Tcp
         );
 
-        // add server info
-        IPEndPoint endPoint = new IPEndPoint(
-            address: IPAddress.Parse("127.0.0.1"),
-            port: 8080);
+        this.EndPoint = endPoint;
+    }
 
-        // create port
-        socket.Bind(endPoint);
-
-        // add limit
-        socket.Listen(10);
-
+    public async Task ListenAsync()
+    {
         while(true) {
             // open listener (wait for new client connection)
-            Socket clientSocket = await socket.AcceptAsync();
+            Socket clientSocket = await this.Socket.AcceptAsync();
 
             // new connection (run async)
             await Task.Run(async () => {
@@ -51,5 +49,14 @@ public class ServerSocket
                 }
             });
         }
+    }
+
+    public void Open()
+    {
+        // create port
+        this.Socket.Bind(this.EndPoint);
+
+        // add limit
+        this.Socket.Listen(10);
     }
 }

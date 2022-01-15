@@ -1,27 +1,30 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Core.Base;
 
 namespace Client;
 
-public class ClientSocket
+public class ClientSocket : IClient
 {
-    public async Task ConnectToServer() {
-        // create Socket
-        Socket socket = new Socket(
+    public Socket Socket { get; private set; }
+    public readonly IPEndPoint EndPoint;
+
+    public ClientSocket(IPEndPoint endPoint) {
+        this.Socket = new Socket(
             addressFamily: AddressFamily.InterNetwork,
             socketType: SocketType.Stream,
             protocolType: ProtocolType.Tcp
         );
 
-        // add server info
-        IPEndPoint endPoint = new IPEndPoint(
-            address: IPAddress.Parse("127.0.0.1"),
-            port: 8080);
-
+        this.EndPoint = endPoint;
+    }
+    public async Task ConnectAsync() {
         // connect to server
-        await socket.ConnectAsync(endPoint);
+        await this.Socket.ConnectAsync(this.EndPoint);
+    }
 
+    public async Task SendMessageAsync() {
         while(true) {
             // write message for server
             System.Console.Write("Message: ");
@@ -30,7 +33,7 @@ public class ClientSocket
 
             // sned message to server
             ArraySegment<byte> segment = new ArraySegment<byte>(messageBinary);
-            int bytesSend = await socket.SendAsync(segment, SocketFlags.None);
+            int bytesSend = await this.Socket.SendAsync(segment, SocketFlags.None);
         }
     }
 }

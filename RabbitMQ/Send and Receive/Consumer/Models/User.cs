@@ -1,4 +1,4 @@
-namespace Publisher.Models
+namespace Consumer.Models
 {
     public class User
     {

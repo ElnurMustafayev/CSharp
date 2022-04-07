@@ -5,11 +5,11 @@ namespace Helper.MQ;
 
 public abstract class SenderBase
 {
-    public readonly string hostname;
-    public readonly string password;
-    public readonly string queueName;
-    public readonly string username;
-    public IConnection connection;
+    protected readonly string hostname;
+    protected readonly string password;
+    protected readonly string queueName;
+    protected readonly string username;
+    protected IConnection connection;
 
     public SenderBase(RabbitMqConfiguration configuration)
     {
@@ -34,17 +34,11 @@ public abstract class SenderBase
             };
 
             this.connection = factory.CreateConnection();
-
-            this.connection.ConnectionShutdown += OnShutdown;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Could not create connection: {ex.Message}");
         }
-    }
-
-    private void OnShutdown(object? sender, ShutdownEventArgs e) {
-        this.connection?.Dispose();
     }
 
     public virtual bool ConnectionExists()

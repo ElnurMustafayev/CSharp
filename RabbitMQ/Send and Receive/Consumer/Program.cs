@@ -1,14 +1,31 @@
-﻿using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using System.Text;
+using Consumer.Services;
+using Helper.Options;
 
-namespace Consumer;
+var builder = WebApplication.CreateBuilder(args);
 
-public class Program
-{
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-    public static void Main()
-    {
-        
-    }
+// options 
+builder.Services.AddOptions();
+
+var serviceClientSettingsConfig = builder.Configuration.GetSection("RabbitMq");
+builder.Services.Configure<RabbitMqConfiguration>(serviceClientSettingsConfig);
+
+// services
+builder.Services.AddSingleton<IUserService, UserService>();
+
+// background
+builder.Services.AddHostedService<UserReceiver>();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction()) {
+	app.UseSwagger();
+	app.UseSwaggerUI();
 }
+
+app.MapControllers();
+
+app.Run();

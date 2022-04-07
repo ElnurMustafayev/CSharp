@@ -5,7 +5,7 @@ using Publisher.Services;
 namespace Publisher.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     public class UserController : ControllerBase
     {
         private readonly IUserSender userSender;
@@ -17,7 +17,11 @@ namespace Publisher.Controllers
         [HttpGet]
         public ActionResult<User> SendUser()
         {
-            User newUser = new User("John");
+            User newUser = new User() {
+                Id = 123,
+                CreatedDate = DateTime.Now,
+                Username = "John"
+            };
 
             userSender.SendUser(newUser);
 
